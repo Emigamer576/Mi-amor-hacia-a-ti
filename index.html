@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Valeria ❤️</title>
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333; margin: 0;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+        }
+        h1, h2, h3 { color: #880e4f; font-family: 'Georgia', serif; }
+
+        /* Animaciones de fondo vibrante progresivo - Tonos Claritos y Rosados */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .bg-level-0 { background: linear-gradient(-45deg, #ffffff, #fff0f5, #ffe4e1); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        .bg-level-1 { background: linear-gradient(-45deg, #fff0f5, #fce4ec, #ffb6c1); background-size: 400% 400%; animation: gradientBG 14s ease infinite; }
+        .bg-level-2 { background: linear-gradient(-45deg, #fce4ec, #ffb6c1, #ffc0cb); background-size: 400% 400%; animation: gradientBG 13s ease infinite; }
+        .bg-level-3 { background: linear-gradient(-45deg, #ffe4e1, #ffb6c1, #f8bbd0, #fff0f5); background-size: 400% 400%; animation: gradientBG 12s ease infinite; }
+        .bg-level-4 { background: linear-gradient(-45deg, #ffb6c1, #ff99cc, #ffc0cb, #ffe4e1); background-size: 400% 400%; animation: gradientBG 10s ease infinite; }
+        .bg-level-5 { background: linear-gradient(-45deg, #ff99cc, #f48fb1, #f8bbd0, #ffb6c1); background-size: 400% 400%; animation: gradientBG 9s ease infinite; }
+        .bg-level-6 { background: linear-gradient(-45deg, #f48fb1, #ff69b4, #ff99cc, #ffb6c1); background-size: 400% 400%; animation: gradientBG 8s ease infinite; }
+        .bg-level-7 { background: linear-gradient(-45deg, #ff69b4, #ff1493, #f48fb1, #ff99cc); background-size: 400% 400%; animation: gradientBG 7s ease infinite; }
+        .bg-level-8 { background: linear-gradient(-45deg, #ff1493, #d81b60, #ff69b4, #ffb6c1); background-size: 400% 400%; animation: gradientBG 6s ease infinite; }
+
+        /* --- INTRODUCCIÓN CINEMÁTICA --- */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background-color: transparent; z-index: 1000;
+        }
+        #question-box {
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 3px solid #f48fb1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #btn-si {
+            background-color: #e91e63; color: white; border: none; padding: 15px 40px;
+            border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer;
+            margin-top: 20px; transition: transform 0.2s, background 0.2s;
+        }
+        #btn-si:hover { background-color: #c2185b; transform: scale(1.1); }
+
+        #intro-text {
+            position: absolute; font-size: 3em; color: #880e4f; font-weight: bold;
+            opacity: 0; text-align: center; padding: 0 20px;
+            transition: opacity 1s ease; font-family: 'Georgia', serif;
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        #main-content {
+            display: none; opacity: 0; width: 100%; flex-direction: column; align-items: center;
+            transition: opacity 2s ease;
+        }
+
+        header { 
+            text-align: center; padding: 30px; background-color: #f8bbd0; width: 100%; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            opacity: 0; transform: scale(0.8) translateY(-50px); 
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        header.show-anim { opacity: 1; transform: scale(1) translateY(0); }
+
+        /* --- LÍNEA DE TIEMPO ANIMADA --- */
+        #timeline-container { width: 80%; max-width: 800px; position: relative; padding: 40px 0; overflow: hidden; }
+        #timeline-container::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background-color: #f48fb1; z-index: -1;
+        }
+
+        .timeline-level {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 50px; position: relative; 
+            opacity: 0; transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .timeline-level:nth-child(odd) { transform: translateX(-100vw); }
+        .timeline-level:nth-child(even) { transform: translateX(100vw); }
+        .timeline-level.show-anim { opacity: 1; transform: translateX(0); }
+
+        .level-dot {
+            width: 30px; height: 30px; background-color: #fff; border: 4px solid #b0bec5;
+            border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .level-content {
+            width: 42%; background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; border: 2px solid transparent;
+            transition: all 0.5s ease;
+        }
+        .timeline-level:nth-child(even) .level-content { margin-left: auto; }
+
+        .locked .level-dot { border-color: #b0bec5; background-color: #eceff1; }
+        .locked .level-content { opacity: 0.5; filter: grayscale(100%); background: #f5f5f5; }
+        .active-level .level-dot { border-color: #f44336; background-color: #fff; box-shadow: 0 0 10px #f44336; }
+        .active-level .level-content { border-color: #f44336; transform: scale(1.05); }
+        .completed .level-dot { border-color: #ad1457; background-color: #ad1457; }
+        .completed .level-content { border-color: #ad1457; background: #fff0f5; }
+
+        .level-date { font-size: 1.2em; font-weight: bold; color: #880e4f; margin-bottom: 10px; display: block; }
+        .story-details { display: none; margin-top: 15px; animation: fadeIn 1s; }
+        .completed .story-details { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .level-drawing {
+            width: 100%; min-height: 150px; background-color: #e0e0e0; border-radius: 10px;
+            margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        .level-drawing img { max-width: 100%; height: auto; }
+
+        .play-btn {
+            background-color: #ad1457; color: white; border: none; padding: 12px 25px;
+            border-radius: 25px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 1.1em;
+            transition: all 0.2s;
+        }
+        .play-btn:hover { background-color: #880e4f; transform: scale(1.1); box-shadow: 0 5px 15px rgba(136,14,79,0.4); }
+        .padlock { font-size: 2em; color: #9e9e9e; }
+
+        /* --- MODAL DE PUZZLES --- */
+        #puzzle-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center;
+        }
+        #puzzle-container {
+            background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px;
+            text-align: center; border: 5px solid #f48fb1; position: relative;
+        }
+        .modal-anim-in { animation: epicPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes epicPop { 0% { opacity: 0; transform: scale(0.5) translateY(200px) rotate(-10deg); } 100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); } }
+
+        #close-modal { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; color: #880e4f; font-weight: bold; }
+        #puzzle-game-area { margin: 20px 0; min-height: 200px; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+
+        /* Estilos minijuegos */
+        .simon-btn { width: 80px; height: 80px; margin: 10px; border-radius: 15px; border: none; cursor: pointer; opacity: 0.5; transition: opacity 0.2s; }
+        .simon-btn.active { opacity: 1; box-shadow: 0 0 15px currentColor; }
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; justify-content: center; }
+        .memory-card { width: 70px; height: 70px; background-color: #f48fb1; border-radius: 10px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 30px; color: transparent; transition: all 0.3s ease; }
+        .memory-card.flipped { background-color: white; border: 2px solid #f48fb1; color: initial; cursor: default; }
+        .memory-card.matched { background-color: #c8e6c9; border: 2px solid #4caf50; color: initial; cursor: default; opacity: 0.8; }
+        #puzzle-game-area canvas { background-color: #222; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        #particles-canvas { background-color: transparent !important; box-shadow: none !important; border: none !important; }
+        #final-message { display: none; text-align: center; padding: 40px; background: white; margin: 20px; border-radius: 20px; border: 4px solid #880e4f; width: 80%; max-width: 700px; }
+
+        /* --- PANTALLA DE FLASHBACK --- */
+        #flashback-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: white; z-index: 2000; display: none;
+            flex-direction: column; justify-content: center; align-items: center; 
+            opacity: 0; transition: opacity 1s ease;
+        }
+        #flashback-text {
+            font-family: 'Georgia', serif; font-size: 1.8em; color: #880e4f;
+            text-align: justify; max-width: 70%; line-height: 1.8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 2500;"></canvas>
+    <audio id="audio-inicio" src="Inicio.mp3"></audio>
+    <audio id="audio-epic" src="Epic.mp3" loop></audio>
+    <audio id="audio-talk" src="Talk.mp3"></audio>
+
+    <div id="flashback-overlay">
+        <div id="flashback-text"></div>
+    </div>
+
+    <div id="intro-screen">
+        <div id="question-box">
+            <h1>¿Eres el amor de mi vida?</h1>
+            <button id="btn-si">Si</button>
+        </div>
+        <div id="intro-text"></div>
+    </div>
+
+    <div id="main-content">
+        <header id="main-header">
+            <h1>Nuestra Historia ❤️</h1>
+            <p>Cada recuerdo es un nivel superado juntos.</p>
+        </header>
+
+        <div id="timeline-container">
+            </div>
+
+        <div id="final-message">
+            <h2>CHIIII LO LOGRASTEE</h2>
+            <p>Has desbloqueado la carta completa. Gracias por ser mi compañera de vida. Te amo y amare infinitamente por toda la vida 💞</p>
+        </div>
+    </div>
+
+    <div id="puzzle-modal">
+        <div id="puzzle-container">
+            <span id="close-modal" onclick="closeModal()">✖</span>
+            <h2 id="puzzle-title">Minijuego</h2>
+            <p id="puzzle-desc">Descripción del juego</p>
+            <div id="puzzle-game-area"></div>
+            <p id="puzzle-feedback" style="font-weight: bold; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SISTEMA DE AUDIO
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq1, freq2, attack, dur, type = 'sine') {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = type; 
+            osc.frequency.setValueAtTime(freq1, audioCtx.currentTime); 
+            if(freq1 !== freq2) osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + dur);
+            gain.gain.setValueAtTime(0, audioCtx.currentTime); 
+            gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + attack); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
+        }
+
+        const sfx = {
+            pop: () => playTone(400, 600, 0.1, 0.3),
+            click: () => playTone(800, 1200, 0.05, 0.1),
+            jump: () => playTone(300, 800, 0.05, 0.2),
+            catch: () => playTone(1000, 1500, 0.02, 0.1, 'triangle'),
+            error: () => playTone(300, 150, 0.1, 0.4, 'sawtooth'),
+            piano: (freq) => playTone(freq, freq, 0.05, 0.5, 'sine'), // Para el juego de piano
+            success: () => { 
+                playTone(523.25, 1046.50, 0.05, 0.5, 'triangle'); 
+                setTimeout(() => playTone(659.25, 1318.51, 0.05, 0.5, 'triangle'), 100);
+            },
+            transport: () => {
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 1.5);
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 1);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 1.5);
+            },
+            open: () => playTone(200, 800, 0.1, 0.5)
+        };
+
+        document.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON' || e.target.classList.contains('play-btn')) { sfx.click(); }
+        });
+
+        // ==========================================
+        // SECUENCIA DE INTRODUCCIÓN CINEMÁTICA
+        // ==========================================
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        document.getElementById('btn-si').addEventListener('click', async () => {
+            const qBox = document.getElementById('question-box');
+            qBox.style.transform = 'scale(0.8)';
+            qBox.style.opacity = '0';
+            await sleep(500);
+            qBox.style.display = 'none';
+            
+            await sleep(1500); 
+
+            const audioInicio = document.getElementById('audio-inicio');
+            const audioEpic = document.getElementById('audio-epic');
+
+            if(audioInicio && audioEpic) {
+                audioEpic.volume = 0; 
+                audioInicio.play().catch(e => console.log("Auto-play bloqueado", e));
+                audioEpic.play().catch(e => console.log("Auto-play epic bloqueado", e));
+            }
+            
+            const introText = document.getElementById('intro-text');
+            introText.textContent = "Hola amorr :)";
+            introText.style.opacity = '1';
+
+            await sleep(3000);
+
+            introText.style.opacity = '0';
+            await sleep(500); 
+            introText.textContent = "¿Estas lista para ver tu super regalo?";
+            introText.style.opacity = '1';
+
+            await sleep(2500);
+
+            introText.style.opacity = '0';
+            document.body.style.backgroundColor = '#fce4ec'; 
+
+            await sleep(3000);
+
+            document.getElementById('intro-screen').style.display = 'none';
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.display = 'flex';
+            
+            await sleep(50); 
+            mainContent.style.opacity = '1';
+
+            document.getElementById('main-header').classList.add('show-anim');
+            sfx.pop(); 
+            
+            await sleep(600);
+
+            const levels = document.querySelectorAll('.timeline-level');
+            for(let i = 0; i < levels.length; i++) {
+                levels[i].classList.add('show-anim');
+                sfx.pop(); 
+                await sleep(300); 
+            }
+        });
+
+        // ==========================================
+        // DATOS DE LA HISTORIA Y LÍNEA DE TIEMPO
+        // ==========================================
+        const storyEvents = [
+            { date: "El Inicio", title: "El Inicio", text: "Empezamos hablando en el grupo, riendo y compartiendo, ereas alguien de muy pocas palabras, pero de alguna manera eso mismo hizo que quisiera ser tu amigo, compartiendo momentos y demas, hasta que poco a poco nos enamoramos.", img: "dibujo_6to.png", puzzleType: "simon", desc: "Memoriza y repite la secuencia de colores." },
+            { date: "Mitades 1º Sec.", title: "Una Etapa Dificil", text: "Fui muy inmaduro, lo se. Hacía chistes que te lastimaban y te humillaban y que te hacian sentir muy mal. Terminábamos y volvíamos en un ciclo doloroso. Fui un pendejo.", img: "dibujo_secundaria_triste.png", puzzleType: "maze", desc: "Muevete con las flechas y llega al cubo verde" },
+            { date: "Solo Nosotros", title: "Nuestros Encuentros Secretos", text: "Aun recuerdo esos pequeños momentos en los que cuando mis padres salian tu venias a mi casa y nos veiamos en la pandamia, las primeras interacciones que tuvimos como novios fueron increibles e inolvidables.", img: "dibujo_secreto.png", puzzleType: "memory", desc: "Encuentra los pares de nuestras citas secretas en este memorama." },
+            { date: "Algo Malo", title: "La Noticia", text: "Una noticia que ma marco mucho y en nuestra relacion, me dijiste que te irias a canada, no nos volveriamos a ver y todo seria diferente entre nosotros, pero aun asi lo intentamos con todas las adversidades posibles.", img: "dibujo_canada.png", puzzleType: "piano", desc: "Un acorde que amas y que siempre quieres hacer todo sobre esa escala." },
+            { date: "Amigos", title: "Mejores Amigos", text: "Muchas veces terminamos, muchas veces volvimos, pero nunca dejamos de amarnos aun que solo fueramos mejores amigos y tu tuvieras a alguien mas en tu vida.", img: "dibujo_amigos.png", puzzleType: "code", desc: "LA VERDAD OCULTA: Adivina la contraseña secreta de 3 números (entre 1 y 5)." },
+            { date: "Tu eres la", title: "Perfeccion", text: "En todo ese tiempo, me di cuenta lo hermosa que eras, eras lo mejor que me podria haber pasado en mi vida, con tu cara tan bonita y sobre todo tus ojos que me fascinan, eres lo que nunca imagine tener pero que siempre quise tener.", img: "dibujo_apoyo.png", puzzleType: "bubbles", desc: "Usa las flechas y la tecla ESPACIO para disparar burbujas. Atrapa 10 tristezas antes de que toquen fondo." },
+            { date: "De vuelta", title: "Veracruz", text: "Un dia vinieste a veracruz y pense que podriamos volver a intentarlo, entonces salimos y me propuse a pedir que seamos pareja, nunca pude superarte, siempre fuiste la niña que mas ame y que amare en toda mi vida, no existira ninguna como tu y por eso, te elegí a ti.", img: "dibujo_veracruz.png", puzzleType: "dodge", desc: "Muévete con las flechas para esquivar los ataques por 10 segundos. Cuando la pantalla parpadee... VE AL CENTRO" },
+            { date: "Solo una vez mas", title: "Una Promesa", text: "Te prometi nunca mas volverte a hacer daño, tendremos una relacion sana y duradera por siempre.", img: "dibujo_actual.png", puzzleType: "final", desc: "Qué tipo de relación llevamos ahora? Escribe la palabra clave de 4 letras (s_ _ _)." }
+        ];
+
+        let currentLevel = 0;
+        const timeline = document.getElementById('timeline-container');
+        const modal = document.getElementById('puzzle-modal');
+        const gameArea = document.getElementById('puzzle-game-area');
+        const feedback = document.getElementById('puzzle-feedback');
+
+        let animationFrameId;
+        let isGameRunning = false;
+        let epicAudioFadedIn = false; 
+
+        function renderTimeline() {
+            document.body.className = `bg-level-${Math.min(currentLevel, 8)}`;
+            
+            timeline.innerHTML = '';
+            storyEvents.forEach((event, index) => {
+                let stateClass = index < currentLevel ? 'completed' : (index === currentLevel ? 'active-level' : 'locked');
+
+                const div = document.createElement('div');
+                div.className = `timeline-level ${stateClass}`;
+                div.style.opacity = '1'; 
+                div.style.transform = 'translateX(0)';
+                div.id = `level-${index}`;
+                
+                let contentHTML = `<span class="level-date">${event.date}</span>`;
+                if (stateClass === 'locked') contentHTML += `<div class="padlock">🔒</div><p>Desbloquea el nivel anterior primero.</p>`;
+                else if (stateClass === 'active-level') contentHTML += `<button class="play-btn" onclick="startPuzzle(${index})">▶️ Jugar Minijuego</button><div class="story-details"><p>Supera el juego para ver este recuerdo.</p></div>`;
+                else if (stateClass === 'completed') contentHTML += `<div class="story-details" style="display:block;"><div class="level-drawing"><img src="${event.img}" alt="Dibujo"></div><h3>${event.title}</h3><p>${event.text}</p></div>`;
+
+                div.innerHTML = `<div class="level-dot"></div><div class="level-content">${contentHTML}</div>`;
+                timeline.appendChild(div);
+            });
+
+            if (storyEvents.length - currentLevel === 6 && !epicAudioFadedIn) {
+                fadeInEpicAudio();
+            }
+
+            if (currentLevel >= storyEvents.length) {
+                document.getElementById('final-message').style.display = 'block';
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        function fadeInEpicAudio() {
+            const audioEpic = document.getElementById('audio-epic');
+            const audioInicio = document.getElementById('audio-inicio');
+            if(!audioEpic) return;
+            
+            epicAudioFadedIn = true;
+
+            if(audioInicio && audioInicio.currentTime > 0) {
+                audioEpic.currentTime = audioInicio.currentTime;
+            }
+            
+            let vol = 0;
+            const fadeInterval = setInterval(() => {
+                if (vol < 1.0) {
+                    vol += 0.02;
+                    audioEpic.volume = Math.min(vol, 1.0);
+                } else {
+                    clearInterval(fadeInterval);
+                }
+            }, 50);
+        }
+
+        function startPuzzle(index) {
+            const event = storyEvents[index];
+            document.getElementById('puzzle-title').textContent = "Misión: Nivel " + (index + 1);
+            document.getElementById('puzzle-desc').textContent = event.desc;
+            feedback.textContent = ''; gameArea.innerHTML = '';
+            
+            modal.style.display = 'flex';
+            const pContainer = document.getElementById('puzzle-container');
+            pContainer.classList.remove('modal-anim-in');
+            void pContainer.offsetWidth; 
+            pContainer.classList.add('modal-anim-in');
+            sfx.open();
+
+            isGameRunning = true;
+
+            if (event.puzzleType === 'simon') initSimon();
+            if (event.puzzleType === 'maze') initMaze();
+            if (event.puzzleType === 'memory') initMemory();
+            if (event.puzzleType === 'piano') initPiano();     // Reemplazo 1
+            if (event.puzzleType === 'code') initCodebreaker();
+            if (event.puzzleType === 'bubbles') initBubbles(); // Reemplazo 2
+            if (event.puzzleType === 'dodge') initDodge();     // Reemplazo 3
+            if (event.puzzleType === 'final') initFinal();
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            isGameRunning = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        }
+
+        function winLevel() {
+            feedback.style.color = 'green';
+            feedback.textContent = '¡NIVEL SUPERADO! ❤️';
+            isGameRunning = false;
+            sfx.success(); 
+
+            setTimeout(() => {
+                const puzzleIndex = currentLevel; 
+                closeModal();
+                startFlashbackSequence(puzzleIndex); 
+            }, 1500);
+        }
+
+        // ==========================================
+        // SECUENCIA DE FLASHBACK
+        // ==========================================
+        let unlockedParagraph = ""; 
+
+        const storySnippets = [
+            "Todo empezo en un salon en 4° de primaria, a inicios de ciclo te vi sola, y me acerque a ti para preguntarte por que siempre te veia sola y desde en ese momento, empezamos a ser amigos, y poco a poco nos empezamos a enamorar.",
+            " Pasamos por momentos difíciles y errores que dolieron, pero entendí que mi lugar siempre ha sido a tu lado.",
+            " Esos pequeños momentos en los que siempre nos veiamos a escondidas eran increibles, amaba y aun amo demasiado compartir con mi persona favorita en este mundo.",
+            " La distancia nunca sera un problema para nosotros, siempre nos tendremos el uno para el otro sin importar que.",
+            " A veces el miedo nos hizo tomar caminos separados por un tiempo, pero la verdad de lo que sentíamos siempre nos volvía a unir.",
+            " Cuando el mundo te falló, te prometí ser tu soporte incondicional, recogiendo cada pedazo para verte brillar de nuevo.",
+            " Hasta que el tiempo se detuvo en Veracruz, y te confesé frente a frente lo que mi corazón siempre supo.",
+            " Hoy, con una promesa firme y un amor maduro, sé que eres y siempre serás el amor de mi vida."
+        ];
+
+        async function startFlashbackSequence(index) {
+            const overlay = document.getElementById('flashback-overlay');
+            const textContainer = document.getElementById('flashback-text');
+            const talkAudio = document.getElementById('audio-talk');
+            
+            sfx.transport();
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.style.opacity = '1', 50);
+            
+            await sleep(3000); 
+            
+            textContainer.innerHTML = unlockedParagraph;
+            
+            const newSnippet = storySnippets[index] || " (Texto oculto revelado).";
+            
+            for (let i = 0; i < newSnippet.length; i++) {
+                textContainer.innerHTML += newSnippet.charAt(i);
+                
+                if (newSnippet.charAt(i) !== ' ') {
+                    if(talkAudio) {
+                        talkAudio.currentTime = 0;
+                        talkAudio.play().catch(() => {});
+                    }
+                }
+                await sleep(50); 
+            }
+
+            unlockedParagraph += newSnippet;
+
+            await sleep(3000); 
+
+            overlay.style.opacity = '0';
+            await sleep(1000);
+            overlay.style.display = 'none';
+            textContainer.innerHTML = ""; 
+            
+            currentLevel++;
+            renderTimeline();
+            
+            if(currentLevel < storyEvents.length) {
+                const next = document.getElementById(`level-${currentLevel}`);
+                next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => { next.classList.add('show-anim'); sfx.pop(); }, 500);
+            }
+        }
+
+        // ==========================================
+        // CÓDIGO DE LOS MINIJUEGOS
+        // ==========================================
+        function initSimon() {
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffc107'];
+            gameArea.innerHTML = `<div id="simon-board" style="display:grid; grid-template-columns: 1fr 1fr;"></div>`;
+            const board = document.getElementById('simon-board');
+            let sequence = [], playerSeq = [];
+            colors.forEach((color, i) => {
+                const btn = document.createElement('button'); btn.className = 'simon-btn'; btn.style.backgroundColor = color;
+                btn.onclick = () => handleSimonClick(i); board.appendChild(btn);
+            });
+            function nextRound() { playerSeq = []; sequence.push(Math.floor(Math.random() * 4)); playSequence(); }
+            function playSequence() {
+                let i = 0; board.style.pointerEvents = 'none';
+                const interval = setInterval(() => {
+                    board.children[sequence[i]].classList.add('active'); sfx.pop();
+                    setTimeout(() => board.children[sequence[i-1]].classList.remove('active'), 400);
+                    i++; if (i >= sequence.length) { clearInterval(interval); board.style.pointerEvents = 'auto'; }
+                }, 800);
+            }
+            function handleSimonClick(index) {
+                board.children[index].classList.add('active'); sfx.click();
+                setTimeout(() => board.children[index].classList.remove('active'), 200);
+                playerSeq.push(index);
+                if (playerSeq[playerSeq.length - 1] !== sequence[playerSeq.length - 1]) { sfx.error(); feedback.textContent = '¡Error! Reiniciando...'; sequence = []; setTimeout(nextRound, 1000); return; }
+                if (playerSeq.length === sequence.length) { if (sequence.length === 4) winLevel(); else setTimeout(nextRound, 1000); }
+            }
+            setTimeout(nextRound, 500);
+        }
+
+        function initMaze() {
+            gameArea.innerHTML = `<canvas id="mazeCanvas" width="300" height="300"></canvas>`;
+            const ctx = document.getElementById('mazeCanvas').getContext('2d');
+            let p = {x: 10, y: 10, s: 15}, goal = {x: 270, y: 270, s: 20}, enemies = [{x: 50, y: 0, w: 20, h: 200, d: 1}, {x: 150, y: 100, w: 20, h: 200, d: -1}, {x: 230, y: 0, w: 20, h: 150, d: 1}], keys = {};
+            window.onkeydown = e => keys[e.key] = true; window.onkeyup = e => keys[e.key] = false;
+            function update() {
+                if(!isGameRunning) return;
+                if(keys['ArrowUp'] && p.y > 0) p.y -= 3; if(keys['ArrowDown'] && p.y < 300-p.s) p.y += 3;
+                if(keys['ArrowLeft'] && p.x > 0) p.x -= 3; if(keys['ArrowRight'] && p.x < 300-p.s) p.x += 3;
+                ctx.clearRect(0,0,300,300); ctx.fillStyle = '#4caf50'; ctx.fillRect(goal.x, goal.y, goal.s, goal.s);
+                ctx.fillStyle = '#f44336';
+                enemies.forEach(e => {
+                    e.y += e.d * 2.5; if(e.y < 0 || e.y + e.h > 300) e.d *= -1; ctx.fillRect(e.x, e.y, e.w, e.h);
+                    if(p.x < e.x+e.w && p.x+p.s > e.x && p.y < e.y+e.h && p.y+p.s > e.y) { p.x = 10; p.y = 10; sfx.error(); }
+                });
+                ctx.fillStyle = '#2196f3'; ctx.fillRect(p.x, p.y, p.s, p.s);
+                if(p.x < goal.x+goal.s && p.x+p.s > goal.x && p.y < goal.y+goal.s && p.y+p.s > goal.y) winLevel(); else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initMemory() {
+            gameArea.innerHTML = `<div id="memory-board" class="memory-grid"></div>`;
+            const emojis = ['❤️', '🏠', '🤫', '👩‍❤️‍👨', '💋', '🌙']; let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5), flippedCards = [], matchedPairs = 0;
+            cards.forEach((emoji, i) => {
+                const card = document.createElement('div'); card.className = 'memory-card'; card.dataset.emoji = emoji;
+                card.onclick = () => {
+                    if(flippedCards.length < 2 && !card.classList.contains('flipped') && !card.classList.contains('matched')) {
+                        sfx.click(); card.classList.add('flipped'); card.textContent = emoji; flippedCards.push(card);
+                        if(flippedCards.length === 2) setTimeout(() => {
+                            const [c1, c2] = flippedCards;
+                            if(c1.dataset.emoji === c2.dataset.emoji) { sfx.catch(); c1.classList.add('matched'); c2.classList.add('matched'); matchedPairs++; if(matchedPairs === emojis.length) winLevel(); } 
+                            else { sfx.error(); c1.classList.remove('flipped'); c2.classList.remove('flipped'); c1.textContent = ''; c2.textContent = ''; }
+                            flippedCards = [];
+                        }, 800);
+                    }
+                };
+                document.getElementById('memory-board').appendChild(card);
+            });
+        }
+
+        // --- NUEVO: JUEGO DEL PIANO (Reemplaza a Canadá) ---
+        function initPiano() {
+            gameArea.innerHTML = `
+                <div style="display:flex; justify-content:center; gap:10px; margin-top:20px;">
+                    <button class="play-btn" style="width:60px; height:60px;" onclick="playNote('Do', 261.63)">Do</button>
+                    <button class="play-btn" style="width:60px; height:60px;" onclick="playNote('Re', 293.66)">Re</button>
+                    <button class="play-btn" style="width:60px; height:60px;" onclick="playNote('Mi', 329.63)">Mi</button>
+                    <button class="play-btn" style="width:60px; height:60px;" onclick="playNote('Sol', 392.00)">Sol</button>
+                    <button class="play-btn" style="width:60px; height:60px;" onclick="playNote('Si', 493.88)">Si</button>
+                </div>
+                <p id="piano-hint" style="margin-top:20px; font-weight:bold; font-size:1.2em; color:#880e4f; min-height:30px;"></p>
+            `;
+            const expectedSequence = ['Mi', 'Sol', 'Si']; // Acorde de Mi Menor
+            let currentStep = 0;
+            
+            window.playNote = (note, freq) => {
+                sfx.piano(freq);
+                const hint = document.getElementById('piano-hint');
+                
+                if (note === expectedSequence[currentStep]) {
+                    currentStep++;
+                    hint.textContent += note + " - ";
+                    
+                    if (currentStep === expectedSequence.length) {
+                        hint.textContent = "¡Mi Menor! Acorde Perfecto ❤️";
+                        setTimeout(winLevel, 800);
+                    }
+                } else {
+                    sfx.error();
+                    currentStep = 0;
+                    hint.textContent = "Esa no es la melodía... intenta de nuevo.";
+                    setTimeout(() => hint.textContent = "", 1500);
+                }
+            }
+        }
+
+        function initCodebreaker() {
+            const sec = [Math.floor(Math.random()*5)+1, Math.floor(Math.random()*5)+1, Math.floor(Math.random()*5)+1];
+            gameArea.innerHTML = `<div style="display:flex; gap:10px; justify-content:center;"><input type="number" id="c1" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"><input type="number" id="c2" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"><input type="number" id="c3" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"></div><button class="play-btn" onclick="checkCode()">Intentar</button><p id="code-hint" style="margin-top:10px;"></p>`;
+            window.checkCode = () => {
+                let ex = 0, g = [parseInt(document.getElementById('c1').value), parseInt(document.getElementById('c2').value), parseInt(document.getElementById('c3').value)];
+                for(let i=0; i<3; i++) if(g[i] === sec[i]) ex++;
+                if(ex === 3) winLevel(); else { sfx.error(); document.getElementById('code-hint').textContent = `${ex} número(s) correcto(s) en su posición.`; }
+            }
+        }
+
+        // --- NUEVO: JUEGO DE BURBUJAS (Reemplaza a los corazones que caen) ---
+        function initBubbles() {
+            gameArea.innerHTML = `<canvas id="bubbleCanvas" width="300" height="400" style="background:#1a1a2e;"></canvas>`;
+            const ctx = document.getElementById('bubbleCanvas').getContext('2d');
+            let p = {x: 135, y: 360, w: 30, h: 30}, bubbles = [], enemies = [], score = 0, keys = {};
+            
+            // Controles de teclado
+            window.onkeydown = e => { keys[e.code] = true; if(e.code === 'Space') shootBubble(); e.preventDefault(); };
+            window.onkeyup = e => keys[e.code] = false;
+            // Soporte para touch/click
+            document.getElementById('bubbleCanvas').onmousedown = shootBubble;
+            document.getElementById('bubbleCanvas').ontouchstart = (e) => { e.preventDefault(); shootBubble(); };
+            
+            function shootBubble() {
+                if(isGameRunning) {
+                    bubbles.push({x: p.x + p.w/2, y: p.y, r: 6});
+                    sfx.pop();
+                }
+            }
+
+            function update() {
+                if(!isGameRunning) return;
+                
+                if(keys['ArrowLeft'] && p.x > 0) p.x -= 4; 
+                if(keys['ArrowRight'] && p.x < 300-p.w) p.x += 4;
+                
+                // Spawnear enemigos (tristezas)
+                if(Math.random() < 0.04) enemies.push({x: Math.random()*270, y: -20, w: 20, h: 20});
+                
+                ctx.clearRect(0,0,300,400);
+                
+                // Dibujar jugador (canon rosado)
+                ctx.fillStyle = '#ff99cc';
+                ctx.beginPath();
+                ctx.moveTo(p.x + p.w/2, p.y);
+                ctx.lineTo(p.x + p.w, p.y + p.h);
+                ctx.lineTo(p.x, p.y + p.h);
+                ctx.fill();
+                
+                // Dibujar y mover Burbujas
+                ctx.fillStyle = 'rgba(173, 216, 230, 0.6)';
+                ctx.strokeStyle = '#e0f7fa';
+                ctx.lineWidth = 2;
+                for(let i=bubbles.length-1; i>=0; i--) {
+                    let b = bubbles[i]; 
+                    b.y -= 6;
+                    ctx.beginPath(); ctx.arc(b.x, b.y, b.r, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+                    if(b.y < 0) bubbles.splice(i, 1);
+                }
+                
+                // Dibujar y mover Enemigos
+                ctx.fillStyle = '#78909c';
+                for(let i=enemies.length-1; i>=0; i--) {
+                    let e = enemies[i]; 
+                    e.y += 2.5;
+                    ctx.fillRect(e.x, e.y, e.w, e.h);
+                    
+                    // Colisión con el jugador (pierdes)
+                    if(e.y+e.h > p.y && e.y < p.y+p.h && e.x+e.w > p.x && e.x < p.x+p.w) {
+                        sfx.error(); score = Math.max(0, score-3); enemies.splice(i, 1); continue;
+                    }
+                    
+                    // Colisión con burbuja
+                    let hit = false;
+                    for(let j=bubbles.length-1; j>=0; j--) {
+                        let b = bubbles[j];
+                        if(b.x > e.x && b.x < e.x+e.w && b.y-b.r < e.y+e.h && b.y+b.r > e.y) {
+                            sfx.catch(); score++; hit = true;
+                            bubbles.splice(j, 1); break;
+                        }
+                    }
+                    if(hit) enemies.splice(i, 1);
+                    else if(e.y > 400) { enemies.splice(i, 1); sfx.error(); score = Math.max(0, score-1); } // Penalización por dejarlo caer
+                }
+                
+                ctx.fillStyle = 'white'; ctx.font = '16px Arial'; 
+                ctx.fillText(`Limpiando tristezas: ${score}/10`, 10, 20);
+                
+                if(score >= 10) winLevel(); else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        // --- NUEVO: JUEGO DODGE / CROSS COUNTER (Reemplaza a Celeste) ---
+        function initDodge() {
+            gameArea.innerHTML = `<canvas id="dodgeCanvas" width="300" height="300" style="background:#263238;"></canvas>`;
+            const ctx = document.getElementById('dodgeCanvas').getContext('2d');
+            let p = {x: 140, y: 250, w: 20, h: 20}, projectiles = [], frame = 0, phase = 1, counterTarget = null, keys = {};
+            
+            window.onkeydown = e => keys[e.code] = true;
+            window.onkeyup = e => keys[e.code] = false;
+            
+            function update() {
+                if(!isGameRunning) return;
+                frame++;
+                
+                // Movimiento (Sin dash mezclado con ataque)
+                if(keys['ArrowLeft'] && p.x > 0) p.x -= 4.5; 
+                if(keys['ArrowRight'] && p.x < 300-p.w) p.x += 4.5;
+                if(keys['ArrowUp'] && p.y > 0) p.y -= 4.5; 
+                if(keys['ArrowDown'] && p.y < 300-p.h) p.y += 4.5;
+                
+                ctx.clearRect(0,0,300,300);
+                
+                if (phase === 1) {
+                    // Generar obstáculos rojos
+                    if(frame % 15 === 0) projectiles.push({
+                        x: Math.random()*280, y: -20, w: 15, h: 40, vx: (Math.random()-0.5)*2, vy: 4
+                    });
+                    
+                    ctx.fillStyle = '#ff5252';
+                    for(let i=projectiles.length-1; i>=0; i--) {
+                        let pr = projectiles[i]; 
+                        pr.x += pr.vx; pr.y += pr.vy;
+                        ctx.fillRect(pr.x, pr.y, pr.w, pr.h);
+                        
+                        // Colisión
+                        if(pr.y+pr.h > p.y && pr.y < p.y+p.h && pr.x+pr.w > p.x && pr.x < p.x+p.w) {
+                            sfx.error(); frame = 0; projectiles = []; p.x = 140; p.y = 250; break; // Reinicia el timer
+                        }
+                        if(pr.y > 300) projectiles.splice(i, 1);
+                    }
+                    
+                    ctx.fillStyle = 'white'; ctx.font = '16px Arial';
+                    ctx.fillText(`Sobrevive: ${10 - Math.floor(frame/60)}s`, 10, 20);
+                    
+                    // Pasar a fase 2 a los 10 segundos (600 frames aprox)
+                    if(frame >= 600) { 
+                        phase = 2; projectiles = []; 
+                        counterTarget = {x: 80, y: 80, w: 140, h: 140}; 
+                        sfx.open(); // Sonido épico de aviso
+                    }
+                } else if (phase === 2) {
+                    // FASE CROSS COUNTER
+                    ctx.fillStyle = 'rgba(255, 255, 255, ' + (Math.sin(frame/4)*0.5 + 0.5) + ')';
+                    ctx.fillRect(0, 0, 300, 300); 
+                    
+                    ctx.fillStyle = '#f50057';
+                    ctx.fillRect(counterTarget.x, counterTarget.y, counterTarget.w, counterTarget.h);
+                    
+                    ctx.fillStyle = 'white'; ctx.font = '22px Arial'; ctx.fontWeight = 'bold';
+                    ctx.fillText("TOCAME", counterTarget.x+25, counterTarget.y+55);
+                    ctx.fillText(":D", counterTarget.x+15, counterTarget.y+85);
+                    
+                    // Autoconfirmación al tocar la zona
+                    if(counterTarget && p.y+p.h > counterTarget.y && p.y < counterTarget.y+counterTarget.h && p.x+p.w > counterTarget.x && p.x < counterTarget.x+counterTarget.w) {
+                        winLevel(); return;
+                    }
+                }
+                
+                // Dibujar jugador (corazón verde)
+                ctx.fillStyle = '#69f0ae'; 
+                ctx.fillRect(p.x, p.y, p.w, p.h);
+                
+                if(isGameRunning) animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initFinal() {
+            gameArea.innerHTML = `<input type="text" id="final-word" placeholder="Ej: amor..." style="padding:10px; font-size:16px;"><button class="play-btn" onclick="checkFinal()">Sellar Promesa</button>`;
+            window.checkFinal = () => { if(document.getElementById('final-word').value.trim().toLowerCase() === 'sana') winLevel(); else { sfx.error(); feedback.textContent = "Pista: Llevamos una relación s _ _ _."; } };
+        }
+
+        // ==========================================
+        // SISTEMA DE PARTÍCULAS Y LUCES AMBIENTALES
+        // ==========================================
+        const canvasParticles = document.getElementById('particles-canvas');
+        const ctxParticles = canvasParticles.getContext('2d');
+        let particlesArray = [];
+        let ambientLightsArray = [];
+        
+        function resizeCanvas() {
+            canvasParticles.width = window.innerWidth;
+            canvasParticles.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class AmbientLight {
+            constructor() {
+                this.x = Math.random() * canvasParticles.width;
+                this.y = Math.random() * canvasParticles.height;
+                this.size = Math.random() * 200 + 100;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = (Math.random() - 0.5) * 0.8;
+                this.hue = 330 + Math.random() * 20; 
+                this.opacity = Math.random() * 0.15 + 0.05; 
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < -this.size || this.x > canvasParticles.width + this.size) this.speedX *= -1;
+                if (this.y < -this.size || this.y > canvasParticles.height + this.size) this.speedY *= -1;
+            }
+            draw() {
+                ctxParticles.save();
+                ctxParticles.globalCompositeOperation = 'lighter'; 
+                let gradient = ctxParticles.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
+                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 85%, ${this.opacity})`);
+                gradient.addColorStop(1, `hsla(${this.hue}, 100%, 85%, 0)`);
+                
+                ctxParticles.fillStyle = gradient;
+                ctxParticles.beginPath();
+                ctxParticles.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctxParticles.fill();
+                ctxParticles.restore();
+            }
+        }
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvasParticles.width;
+                this.y = Math.random() * canvasParticles.height - canvasParticles.height;
+                this.size = Math.random() * 5 + 2;
+                this.speedY = Math.random() * 1 + 0.3;
+                this.speedX = Math.random() * 1.5 - 0.75;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 3 - 1.5;
+                this.type = Math.random() > 0.3 ? 0 : 1; 
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+            update() {
+                let levelMultiplier = 1 + (currentLevel * 0.15);
+                this.y += this.speedY * levelMultiplier;
+                this.x += (this.speedX + Math.sin(this.angle * Math.PI / 180)) * (levelMultiplier * 0.5);
+                this.angle += this.spin;
+
+                if (this.y > canvasParticles.height) {
+                    this.reset();
+                    this.y = -10; 
+                }
+            }
+            draw() {
+                ctxParticles.save();
+                ctxParticles.translate(this.x, this.y);
+                ctxParticles.rotate(this.angle * Math.PI / 180);
+                
+                let hue = 340; 
+                if (currentLevel > 4) hue = (340 + (currentLevel * 5)) % 360;
+                
+                if (this.type === 0) { 
+                    ctxParticles.fillStyle = `hsla(${hue}, 100%, 85%, ${this.opacity})`;
+                    ctxParticles.beginPath();
+                    ctxParticles.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                    ctxParticles.fill();
+                } else { 
+                    ctxParticles.globalCompositeOperation = 'lighter';
+                    ctxParticles.beginPath();
+                    let glowColor = `hsla(${hue}, 100%, 85%, ${this.opacity})`;
+                    let gradient = ctxParticles.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                    gradient.addColorStop(0, glowColor);
+                    gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+                    ctxParticles.fillStyle = gradient;
+                    ctxParticles.arc(0, 0, this.size * 1.5, 0, Math.PI * 2);
+                    ctxParticles.fill();
+                }
+                ctxParticles.restore();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            ambientLightsArray = [];
+            for (let i = 0; i < 60; i++) particlesArray.push(new Particle());
+            for (let i = 0; i < 8; i++) ambientLightsArray.push(new AmbientLight());
+        }
+
+        function animateParticles() {
+            ctxParticles.clearRect(0, 0, canvasParticles.width, canvasParticles.height);
+            
+            for (let i = 0; i < ambientLightsArray.length; i++) {
+                ambientLightsArray[i].update();
+                ambientLightsArray[i].draw();
+            }
+
+            drawMouseGlow();
+            
+            if (document.getElementById('intro-screen').style.display === 'none') {
+               for (let i = 0; i < particlesArray.length; i++) {
+                   let targetCount = Math.floor(60 * (0.3 + (currentLevel * 0.1)));
+                   if(i < targetCount) {
+                       particlesArray[i].update();
+                       particlesArray[i].draw();
+                   }
+               }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        let mouseX = 0, mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function drawMouseGlow() {
+            if (currentLevel < 2) return; 
+            ctxParticles.save();
+            ctxParticles.globalCompositeOperation = 'lighter';
+            let gradient = ctxParticles.createRadialGradient(mouseX, mouseY, 0, mouseX, mouseY, 100 + (currentLevel * 10));
+            let hue = (340 + (currentLevel * 5)) % 360;
+            gradient.addColorStop(0, `hsla(${hue}, 100%, 85%, 0.15)`);
+            gradient.addColorStop(1, 'transparent');
+            ctxParticles.fillStyle = gradient;
+            ctxParticles.fillRect(0, 0, canvasParticles.width, canvasParticles.height);
+            ctxParticles.restore();
+        }
+
+        initParticles();
+        animateParticles();
+        renderTimeline();
+    </script>
+</body>
+</html>

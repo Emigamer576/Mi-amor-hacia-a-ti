@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Valeria ❤️</title>
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333; margin: 0;
+            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+            /* La transición de color original se reemplaza por clases de animación dinámica */
+        }
+        h1, h2, h3 { color: #880e4f; font-family: 'Georgia', serif; }
+
+        /* Animaciones de fondo vibrante progresivo */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-level-0 { background: linear-gradient(-45deg, #ffffff, #fce4ec, #ffffff); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        .bg-level-1 { background: linear-gradient(-45deg, #fce4ec, #f8bbd0, #ffffff); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
+        .bg-level-2 { background: linear-gradient(-45deg, #f8bbd0, #f48fb1, #fce4ec); background-size: 400% 400%; animation: gradientBG 12s ease infinite; }
+        .bg-level-3 { background: linear-gradient(-45deg, #f48fb1, #f06292, #f8bbd0); background-size: 400% 400%; animation: gradientBG 10s ease infinite; }
+        .bg-level-4 { background: linear-gradient(-45deg, #f06292, #ec407a, #f48fb1); background-size: 400% 400%; animation: gradientBG 10s ease infinite; }
+        .bg-level-5 { background: linear-gradient(-45deg, #ec407a, #e91e63, #f06292); background-size: 400% 400%; animation: gradientBG 8s ease infinite; }
+        .bg-level-6 { background: linear-gradient(-45deg, #e91e63, #d81b60, #ec407a, #ffb74d); background-size: 400% 400%; animation: gradientBG 8s ease infinite; }
+        .bg-level-7 { background: linear-gradient(-45deg, #d81b60, #c2185b, #ffb74d, #ff8a65); background-size: 400% 400%; animation: gradientBG 6s ease infinite; }
+        .bg-level-8 { background: linear-gradient(-45deg, #c2185b, #ad1457, #ff9800, #ff5722); background-size: 400% 400%; animation: gradientBG 5s ease infinite; }
+
+        /* --- PANTALLA DE FLASHBACK (FONDO CRISTALINO) --- */
+        #flashback-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(255, 255, 255, 0.4); /* Semitransparente para ver los efectos de fondo */
+            backdrop-filter: blur(4px); /* Efecto cristal para que el texto sea legible */
+            z-index: 2000; display: none;
+            flex-direction: column; justify-content: center; align-items: center; 
+            opacity: 0; transition: opacity 1s ease;
+        }
+
+
+        /* --- INTRODUCCIÓN CINEMÁTICA --- */
+        #intro-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
+            background-color: transparent; z-index: 1000;
+        }
+        #question-box {
+            background: white; padding: 40px; border-radius: 20px; text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 3px solid #f48fb1;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #btn-si {
+            background-color: #e91e63; color: white; border: none; padding: 15px 40px;
+            border-radius: 30px; font-size: 20px; font-weight: bold; cursor: pointer;
+            margin-top: 20px; transition: transform 0.2s, background 0.2s;
+        }
+        #btn-si:hover { background-color: #c2185b; transform: scale(1.1); }
+
+        #intro-text {
+            position: absolute; font-size: 3em; color: #880e4f; font-weight: bold;
+            opacity: 0; text-align: center; padding: 0 20px;
+            transition: opacity 1s ease; font-family: 'Georgia', serif;
+        }
+
+        /* --- CONTENIDO PRINCIPAL --- */
+        #main-content {
+            display: none; opacity: 0; width: 100%; flex-direction: column; align-items: center;
+            transition: opacity 2s ease;
+        }
+
+        header { 
+            text-align: center; padding: 30px; background-color: #f8bbd0; width: 100%; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            opacity: 0; transform: scale(0.8) translateY(-50px); 
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        header.show-anim { opacity: 1; transform: scale(1) translateY(0); }
+
+        /* --- LÍNEA DE TIEMPO ANIMADA --- */
+        #timeline-container { width: 80%; max-width: 800px; position: relative; padding: 40px 0; overflow: hidden; }
+        #timeline-container::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 100%; background-color: #f48fb1; z-index: -1;
+        }
+
+        .timeline-level {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 50px; position: relative; 
+            opacity: 0; transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .timeline-level:nth-child(odd) { transform: translateX(-100vw); }
+        .timeline-level:nth-child(even) { transform: translateX(100vw); }
+        .timeline-level.show-anim { opacity: 1; transform: translateX(0); }
+
+        .level-dot {
+            width: 30px; height: 30px; background-color: #fff; border: 4px solid #b0bec5;
+            border-radius: 50%; position: absolute; left: 50%; transform: translateX(-50%); z-index: 2;
+            transition: all 0.3s ease;
+        }
+        .level-content {
+            width: 42%; background: white; padding: 20px; border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; border: 2px solid transparent;
+            transition: all 0.5s ease;
+        }
+        .timeline-level:nth-child(even) .level-content { margin-left: auto; }
+
+        .locked .level-dot { border-color: #b0bec5; background-color: #eceff1; }
+        .locked .level-content { opacity: 0.5; filter: grayscale(100%); background: #f5f5f5; }
+        .active-level .level-dot { border-color: #f44336; background-color: #fff; box-shadow: 0 0 10px #f44336; }
+        .active-level .level-content { border-color: #f44336; transform: scale(1.05); }
+        .completed .level-dot { border-color: #ad1457; background-color: #ad1457; }
+        .completed .level-content { border-color: #ad1457; background: #fff0f5; }
+
+        .level-date { font-size: 1.2em; font-weight: bold; color: #880e4f; margin-bottom: 10px; display: block; }
+        .story-details { display: none; margin-top: 15px; animation: fadeIn 1s; }
+        .completed .story-details { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+        .level-drawing {
+            width: 100%; min-height: 150px; background-color: #e0e0e0; border-radius: 10px;
+            margin-bottom: 15px; display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        .level-drawing img { max-width: 100%; height: auto; }
+
+        .play-btn {
+            background-color: #ad1457; color: white; border: none; padding: 12px 25px;
+            border-radius: 25px; cursor: pointer; margin-top: 10px; font-weight: bold; font-size: 1.1em;
+            transition: all 0.2s;
+        }
+        .play-btn:hover { background-color: #880e4f; transform: scale(1.1); box-shadow: 0 5px 15px rgba(136,14,79,0.4); }
+        .padlock { font-size: 2em; color: #9e9e9e; }
+
+        /* --- MODAL DE PUZZLES --- */
+        #puzzle-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); z-index: 100; justify-content: center; align-items: center;
+        }
+        #puzzle-container {
+            background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 600px;
+            text-align: center; border: 5px solid #f48fb1; position: relative;
+        }
+        .modal-anim-in { animation: epicPop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes epicPop { 0% { opacity: 0; transform: scale(0.5) translateY(200px) rotate(-10deg); } 100% { opacity: 1; transform: scale(1) translateY(0) rotate(0); } }
+
+        #close-modal { position: absolute; top: 10px; right: 15px; cursor: pointer; font-size: 24px; color: #880e4f; font-weight: bold; }
+        #puzzle-game-area { margin: 20px 0; min-height: 200px; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+
+        /* Estilos minijuegos */
+        .simon-btn { width: 80px; height: 80px; margin: 10px; border-radius: 15px; border: none; cursor: pointer; opacity: 0.5; transition: opacity 0.2s; }
+        .simon-btn.active { opacity: 1; box-shadow: 0 0 15px currentColor; }
+        .memory-grid { display: grid; grid-template-columns: repeat(4, 70px); gap: 10px; justify-content: center; }
+        .memory-card { width: 70px; height: 70px; background-color: #f48fb1; border-radius: 10px; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 30px; color: transparent; transition: all 0.3s ease; }
+        .memory-card.flipped { background-color: white; border: 2px solid #f48fb1; color: initial; cursor: default; }
+        .memory-card.matched { background-color: #c8e6c9; border: 2px solid #4caf50; color: initial; cursor: default; opacity: 0.8; }
+        canvas { background-color: #222; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        #final-message { display: none; text-align: center; padding: 40px; background: white; margin: 20px; border-radius: 20px; border: 4px solid #880e4f; width: 80%; max-width: 700px; }
+
+        #flashback-text {
+            font-family: 'Georgia', serif; font-size: 1.8em; color: #880e4f;
+            text-align: justify; max-width: 70%; line-height: 1.8;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+    <audio id="audio-inicio" src="Inicio.mp3"></audio>
+    <audio id="audio-epic" src="Epic.mp3" loop></audio>
+    <audio id="audio-talk" src="Talk.mp3"></audio>
+
+    <div id="flashback-overlay">
+        <div id="flashback-text"></div>
+    </div>
+
+    <div id="intro-screen">
+        <div id="question-box">
+            <h1>Tengo algo muy importante que mostrarte...</h1>
+            <button id="btn-si">¿Quieres verlo?</button>
+        </div>
+        <div id="intro-text"></div>
+    </div>
+
+    <div id="main-content">
+        <header id="main-header">
+            <h1>Nuestra Historia ❤️</h1>
+            <p>Cada recuerdo es un nivel superado juntos. Completa los desafíos para revelar nuestro camino y armar la carta oculta.</p>
+        </header>
+
+        <div id="timeline-container">
+            </div>
+
+        <div id="final-message">
+            <h2>¡Completaste todos los niveles! 🎉</h2>
+            <p>Has desbloqueado la carta completa. Gracias por ser mi compañera de vida. Te amo infinitamente.</p>
+        </div>
+    </div>
+
+    <div id="puzzle-modal">
+        <div id="puzzle-container">
+            <span id="close-modal" onclick="closeModal()">✖</span>
+            <h2 id="puzzle-title">Minijuego</h2>
+            <p id="puzzle-desc">Descripción del juego</p>
+            <div id="puzzle-game-area"></div>
+            <p id="puzzle-feedback" style="font-weight: bold; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // SISTEMA DE AUDIO (Librería de Videojuego)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playTone(freq1, freq2, attack, dur, type = 'sine') {
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = type; 
+            osc.frequency.setValueAtTime(freq1, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(freq2, audioCtx.currentTime + dur);
+            gain.gain.setValueAtTime(0, audioCtx.currentTime); 
+            gain.gain.linearRampToValueAtTime(0.15, audioCtx.currentTime + attack); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+            osc.connect(gain); gain.connect(audioCtx.destination); 
+            osc.start(); osc.stop(audioCtx.currentTime + dur);
+        }
+
+        const sfx = {
+            pop: () => playTone(400, 600, 0.1, 0.3),
+            click: () => playTone(800, 1200, 0.05, 0.1),
+            jump: () => playTone(300, 800, 0.05, 0.2),
+            catch: () => playTone(1000, 1500, 0.02, 0.1, 'triangle'),
+            error: () => playTone(300, 150, 0.1, 0.4, 'sawtooth'),
+            success: () => { 
+                playTone(523.25, 1046.50, 0.05, 0.5, 'triangle'); 
+                setTimeout(() => playTone(659.25, 1318.51, 0.05, 0.5, 'triangle'), 100);
+            },
+            transport: () => {
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, audioCtx.currentTime + 1.5);
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 1);
+                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1.5);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); osc.stop(audioCtx.currentTime + 1.5);
+            },
+            open: () => playTone(200, 800, 0.1, 0.5)
+        };
+
+        document.addEventListener('click', (e) => {
+            if(e.target.tagName === 'BUTTON' || e.target.classList.contains('play-btn')) { sfx.click(); }
+        });
+
+        // ==========================================
+        // SECUENCIA DE INTRODUCCIÓN CINEMÁTICA
+        // ==========================================
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        document.getElementById('btn-si').addEventListener('click', async () => {
+            const qBox = document.getElementById('question-box');
+            qBox.style.transform = 'scale(0.8)';
+            qBox.style.opacity = '0';
+            await sleep(500);
+            qBox.style.display = 'none';
+            
+            await sleep(1500); 
+
+            // Iniciar Audio Principal
+            const audioInicio = document.getElementById('audio-inicio');
+            const audioEpic = document.getElementById('audio-epic');
+
+            if(audioInicio && audioEpic) {
+                audioEpic.volume = 0; // Epic inicia totalmente en silencio
+                
+                // Los disparamos juntos
+                audioInicio.play().catch(e => console.log("Auto-play bloqueado", e));
+                audioEpic.play().catch(e => console.log("Auto-play epic bloqueado", e));
+            }
+            
+            const introText = document.getElementById('intro-text');
+            introText.textContent = "Hola amorr :)";
+            introText.style.opacity = '1';
+
+            await sleep(3000);
+
+            introText.style.opacity = '0';
+            await sleep(500); 
+            introText.textContent = "¿Estas lista para ver tu super regalo?";
+            introText.style.opacity = '1';
+
+            await sleep(2500);
+
+            introText.style.opacity = '0';
+            document.body.style.backgroundColor = '#fce4ec'; 
+
+            await sleep(3000);
+
+            document.getElementById('intro-screen').style.display = 'none';
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.display = 'flex';
+            
+            await sleep(50); 
+            mainContent.style.opacity = '1';
+
+            document.getElementById('main-header').classList.add('show-anim');
+            sfx.pop(); 
+            
+            await sleep(600);
+
+            const levels = document.querySelectorAll('.timeline-level');
+            for(let i = 0; i < levels.length; i++) {
+                levels[i].classList.add('show-anim');
+                sfx.pop(); 
+                await sleep(300); 
+            }
+        });
+
+        // ==========================================
+        // DATOS DE LA HISTORIA Y LÍNEA DE TIEMPO
+        // ==========================================
+        const storyEvents = [
+            { date: "Finales de 6º Primaria", title: "El Inicio Virtual", text: "Empezamos hablando en el grupo, riendo y compartiendo de forma virtual, hasta que poco a poco nos enamoramos.", img: "dibujo_6to.png", puzzleType: "simon", desc: "CONEXIÓN VIRTUAL: Memoriza y repite la secuencia de colores para conectarnos." },
+            { date: "Mitades 1º Sec. - Finales 2º Sec.", title: "La Etapa Difícil e Inmadura", text: "Fui muy inmaduro. Hacía chistes que te lastimaban y te humillaban. Terminábamos y volvíamos en un ciclo doloroso. Fui un tonto.", img: "dibujo_secundaria_triste.png", puzzleType: "maze", desc: "EL CAMINO TÓXICO: Usa las flechas del teclado para llegar al corazón verde, esquivando los bloques rojos." },
+            { date: "Durante la Secundaria", title: "Nuestros Encuentros Secretos", text: "A escondidas de mis papás, fuiste a mi casa dos veces. Esos ratitos en secreto fueron luz en medio de los problemas.", img: "dibujo_secreto.png", puzzleType: "memory", desc: "RECUERDOS OCULTOS: Encuentra los pares de nuestras citas secretas en este memorama." },
+            { date: "Finales 2º Sec. / Inicios 3º Sec.", title: "La Noticia de Canadá", text: "Me diste una noticia triste: te ibas a Canadá. Lloramos, pero prometimos que seguiríamos y que la distancia no sería un obstáculo.", img: "dibujo_canada.png", puzzleType: "airplane", desc: "EL VIAJE: Mantén clic y arrastra el avión para llegar a la meta (Canadá) arriba. ¡Esquiva las nubes!" },
+            { date: "Durante 3º Secundaria", title: "Mejores Amigos y Pausas", text: "Decidimos ser solo amigos. Una vez fingiste un castigo sin celular por 2 meses solo para darte un tiempo de mí... pero al final volviste.", img: "dibujo_amigos.png", puzzleType: "code", desc: "LA VERDAD OCULTA: Adivina la contraseña secreta de 3 números (entre 1 y 5)." },
+            { date: "Inicios de Preparatoria", title: "Kai y mi Apoyo Incondicional", text: "En la prepa intentaste con Kai, pero él te fue infiel. Cuando tu mundo chocó, ahí estuve yo para apoyarte en todo.", img: "dibujo_apoyo.png", puzzleType: "catcher", desc: "RECOGIENDO LOS PEDAZOS: Usa Izq/Der para atrapar 10 pedazos de tu corazón (rojos). Evita las lágrimas azules." },
+            { date: "Inicios de Diciembre", title: "Veracruz: El Reencuentro y LA Confesión", text: "Viniste a Veracruz. En tu casa te lo dije de frente: 'Siempre te he amado'. Tú sentías lo mismo. Nos besamos y la magia volvió.", img: "dibujo_veracruz.png", puzzleType: "celeste", desc: "PARKOUR HACIA TI: Flechas para moverte, Arriba para saltar. Z/X para DASH en el aire y llegar a Valeria." },
+            { date: "Nuestra Actualidad", title: "Una Promesa y un Amor Maduro", text: "Te prometí que jamás volvería a burlarme ni a lastimarte. He madurado. Hoy llevamos una relación hermosa y sana.", img: "dibujo_actual.png", puzzleType: "final", desc: "LA PROMESA: ¿Qué tipo de relación llevamos ahora? Escribe la palabra clave de 4 letras (s_ _ _)." }
+        ];
+
+        let currentLevel = 0;
+        const timeline = document.getElementById('timeline-container');
+        const modal = document.getElementById('puzzle-modal');
+        const gameArea = document.getElementById('puzzle-game-area');
+        const feedback = document.getElementById('puzzle-feedback');
+
+        let animationFrameId;
+        let isGameRunning = false;
+        let epicAudioFadedIn = false; // Control para que solo pase una vez
+
+        function renderTimeline() {
+        document.body.className = `bg-level-${Math.min(currentLevel, 8)}`;
+            timeline.innerHTML = '';
+            storyEvents.forEach((event, index) => {
+                let stateClass = index < currentLevel ? 'completed' : (index === currentLevel ? 'active-level' : 'locked');
+
+                const div = document.createElement('div');
+                div.className = `timeline-level ${stateClass}`;
+                div.style.opacity = '1'; 
+                div.style.transform = 'translateX(0)';
+                div.id = `level-${index}`;
+                
+                let contentHTML = `<span class="level-date">${event.date}</span>`;
+                if (stateClass === 'locked') contentHTML += `<div class="padlock">🔒</div><p>Desbloquea el nivel anterior primero.</p>`;
+                else if (stateClass === 'active-level') contentHTML += `<button class="play-btn" onclick="startPuzzle(${index})">▶️ Jugar Minijuego</button><div class="story-details"><p>Supera el juego para ver este recuerdo.</p></div>`;
+                else if (stateClass === 'completed') contentHTML += `<div class="story-details" style="display:block;"><div class="level-drawing"><img src="${event.img}" alt="Dibujo"></div><h3>${event.title}</h3><p>${event.text}</p></div>`;
+
+                div.innerHTML = `<div class="level-dot"></div><div class="level-content">${contentHTML}</div>`;
+                timeline.appendChild(div);
+            });
+
+            // Verificar si faltan exactamente 3 minijuegos (Nivel 5 activo, porque son 8 niveles: del 0 al 7)
+            if (storyEvents.length - currentLevel === 6 && !epicAudioFadedIn) {
+                fadeInEpicAudio();
+            }
+
+            if (currentLevel >= storyEvents.length) {
+                document.getElementById('final-message').style.display = 'block';
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
+        }
+
+        // Función para subir el volumen de Epic gradualmente
+            function fadeInEpicAudio() {
+            const audioEpic = document.getElementById('audio-epic');
+            const audioInicio = document.getElementById('audio-inicio');
+            if(!audioEpic) return;
+            
+            epicAudioFadedIn = true;
+
+            // TRUCO: Igualamos el tiempo exacto de Epic con el de Inicio 
+            // para garantizar que la pista no esté desfasada.
+            if(audioInicio && audioInicio.currentTime > 0) {
+                audioEpic.currentTime = audioInicio.currentTime;
+            }
+            
+            let vol = 0;
+            // Sube el volumen 0.02 cada 200ms -> tarda 10 segundos en llegar a 1.0 (volumen máximo)
+            const fadeInterval = setInterval(() => {
+                if (vol < 1.0) {
+                    vol += 0.02;
+                    audioEpic.volume = Math.min(vol, 1.0);
+                } else {
+                    clearInterval(fadeInterval);
+                }
+            }, 50);
+        }
+
+        function startPuzzle(index) {
+            const event = storyEvents[index];
+            document.getElementById('puzzle-title').textContent = "Misión: Nivel " + (index + 1);
+            document.getElementById('puzzle-desc').textContent = event.desc;
+            feedback.textContent = ''; gameArea.innerHTML = '';
+            
+            modal.style.display = 'flex';
+            const pContainer = document.getElementById('puzzle-container');
+            pContainer.classList.remove('modal-anim-in');
+            void pContainer.offsetWidth; 
+            pContainer.classList.add('modal-anim-in');
+            sfx.open();
+
+            isGameRunning = true;
+
+            if (event.puzzleType === 'simon') initSimon();
+            if (event.puzzleType === 'maze') initMaze();
+            if (event.puzzleType === 'memory') initMemory();
+            if (event.puzzleType === 'airplane') initAirplane();
+            if (event.puzzleType === 'code') initCodebreaker();
+            if (event.puzzleType === 'catcher') initCatcher();
+            if (event.puzzleType === 'celeste') initCeleste();
+            if (event.puzzleType === 'final') initFinal();
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            isGameRunning = false;
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        }
+
+        function winLevel() {
+            feedback.style.color = 'green';
+            feedback.textContent = '¡NIVEL SUPERADO! ❤️';
+            isGameRunning = false;
+            sfx.success(); 
+
+            setTimeout(() => {
+                const puzzleIndex = currentLevel; 
+                closeModal();
+                startFlashbackSequence(puzzleIndex); 
+            }, 1500);
+        }
+
+        // ==========================================
+        // SECUENCIA DE FLASHBACK (PÁRRAFO ACUMULATIVO)
+        // ==========================================
+        let unlockedParagraph = ""; 
+
+        const storySnippets = [
+            "Todo comenzó a través de una pantalla, donde unas simples palabras encendieron la chispa de nuestra historia.",
+            " Pasamos por momentos difíciles y errores que dolieron, pero entendí que mi lugar siempre ha sido a tu lado.",
+            " Esos instantes a escondidas se convirtieron en nuestro refugio, un secreto donde solo existíamos tú y yo.",
+            " Incluso cuando la distancia amenazó con separarnos, nuestro lazo demostró ser más fuerte que cualquier frontera.",
+            " A veces el miedo nos hizo tomar caminos separados por un tiempo, pero la verdad de lo que sentíamos siempre nos volvía a unir.",
+            " Cuando el mundo te falló, te prometí ser tu soporte incondicional, recogiendo cada pedazo para verte brillar de nuevo.",
+            " Hasta que el tiempo se detuvo en Veracruz, y te confesé frente a frente lo que mi corazón siempre supo.",
+            " Hoy, con una promesa firme y un amor maduro, sé que eres y siempre serás el amor de mi vida."
+        ];
+
+        async function startFlashbackSequence(index) {
+            const overlay = document.getElementById('flashback-overlay');
+            const textContainer = document.getElementById('flashback-text');
+            const talkAudio = document.getElementById('audio-talk');
+            
+            sfx.transport();
+            overlay.style.display = 'flex';
+            setTimeout(() => overlay.style.opacity = '1', 50);
+            
+            await sleep(3000); 
+            
+            textContainer.innerHTML = unlockedParagraph;
+            
+            const newSnippet = storySnippets[index] || " (Texto oculto revelado).";
+            
+            for (let i = 0; i < newSnippet.length; i++) {
+                textContainer.innerHTML += newSnippet.charAt(i);
+                
+                if (newSnippet.charAt(i) !== ' ') {
+                    if(talkAudio) {
+                        talkAudio.currentTime = 0;
+                        talkAudio.play().catch(() => {});
+                    }
+                }
+                await sleep(50); 
+            }
+
+            unlockedParagraph += newSnippet;
+
+            await sleep(3000); 
+
+            overlay.style.opacity = '0';
+            await sleep(1000);
+            overlay.style.display = 'none';
+            textContainer.innerHTML = ""; 
+            
+            currentLevel++;
+            renderTimeline();
+            
+            if(currentLevel < storyEvents.length) {
+                const next = document.getElementById(`level-${currentLevel}`);
+                next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setTimeout(() => { next.classList.add('show-anim'); sfx.pop(); }, 500);
+            }
+        }
+
+        // ==========================================
+        // CÓDIGO DE LOS MINIJUEGOS
+        // ==========================================
+        function initSimon() {
+            const colors = ['#e91e63', '#2196f3', '#4caf50', '#ffc107'];
+            gameArea.innerHTML = `<div id="simon-board" style="display:grid; grid-template-columns: 1fr 1fr;"></div>`;
+            const board = document.getElementById('simon-board');
+            let sequence = [], playerSeq = [];
+            colors.forEach((color, i) => {
+                const btn = document.createElement('button'); btn.className = 'simon-btn'; btn.style.backgroundColor = color;
+                btn.onclick = () => handleSimonClick(i); board.appendChild(btn);
+            });
+            function nextRound() { playerSeq = []; sequence.push(Math.floor(Math.random() * 4)); playSequence(); }
+            function playSequence() {
+                let i = 0; board.style.pointerEvents = 'none';
+                const interval = setInterval(() => {
+                    board.children[sequence[i]].classList.add('active'); sfx.pop();
+                    setTimeout(() => board.children[sequence[i-1]].classList.remove('active'), 400);
+                    i++; if (i >= sequence.length) { clearInterval(interval); board.style.pointerEvents = 'auto'; }
+                }, 800);
+            }
+            function handleSimonClick(index) {
+                board.children[index].classList.add('active'); sfx.click();
+                setTimeout(() => board.children[index].classList.remove('active'), 200);
+                playerSeq.push(index);
+                if (playerSeq[playerSeq.length - 1] !== sequence[playerSeq.length - 1]) { sfx.error(); feedback.textContent = '¡Error! Reiniciando...'; sequence = []; setTimeout(nextRound, 1000); return; }
+                if (playerSeq.length === sequence.length) { if (sequence.length === 4) winLevel(); else setTimeout(nextRound, 1000); }
+            }
+            setTimeout(nextRound, 500);
+        }
+
+        function initMaze() {
+            gameArea.innerHTML = `<canvas id="mazeCanvas" width="300" height="300"></canvas>`;
+            const ctx = document.getElementById('mazeCanvas').getContext('2d');
+            let p = {x: 10, y: 10, s: 15}, goal = {x: 270, y: 270, s: 20}, enemies = [{x: 50, y: 0, w: 20, h: 200, d: 1}, {x: 150, y: 100, w: 20, h: 200, d: -1}, {x: 230, y: 0, w: 20, h: 150, d: 1}], keys = {};
+            window.onkeydown = e => keys[e.key] = true; window.onkeyup = e => keys[e.key] = false;
+            function update() {
+                if(!isGameRunning) return;
+                if(keys['ArrowUp'] && p.y > 0) p.y -= 3; if(keys['ArrowDown'] && p.y < 300-p.s) p.y += 3;
+                if(keys['ArrowLeft'] && p.x > 0) p.x -= 3; if(keys['ArrowRight'] && p.x < 300-p.s) p.x += 3;
+                ctx.clearRect(0,0,300,300); ctx.fillStyle = '#4caf50'; ctx.fillRect(goal.x, goal.y, goal.s, goal.s);
+                ctx.fillStyle = '#f44336';
+                enemies.forEach(e => {
+                    e.y += e.d * 2.5; if(e.y < 0 || e.y + e.h > 300) e.d *= -1; ctx.fillRect(e.x, e.y, e.w, e.h);
+                    if(p.x < e.x+e.w && p.x+p.s > e.x && p.y < e.y+e.h && p.y+p.s > e.y) { p.x = 10; p.y = 10; sfx.error(); }
+                });
+                ctx.fillStyle = '#2196f3'; ctx.fillRect(p.x, p.y, p.s, p.s);
+                if(p.x < goal.x+goal.s && p.x+p.s > goal.x && p.y < goal.y+goal.s && p.y+p.s > goal.y) winLevel(); else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initMemory() {
+            gameArea.innerHTML = `<div id="memory-board" class="memory-grid"></div>`;
+            const emojis = ['❤️', '🏠', '🤫', '👩‍❤️‍👨', '💋', '🌙']; let cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5), flippedCards = [], matchedPairs = 0;
+            cards.forEach((emoji, i) => {
+                const card = document.createElement('div'); card.className = 'memory-card'; card.dataset.emoji = emoji;
+                card.onclick = () => {
+                    if(flippedCards.length < 2 && !card.classList.contains('flipped') && !card.classList.contains('matched')) {
+                        sfx.click(); card.classList.add('flipped'); card.textContent = emoji; flippedCards.push(card);
+                        if(flippedCards.length === 2) setTimeout(() => {
+                            const [c1, c2] = flippedCards;
+                            if(c1.dataset.emoji === c2.dataset.emoji) { sfx.catch(); c1.classList.add('matched'); c2.classList.add('matched'); matchedPairs++; if(matchedPairs === emojis.length) winLevel(); } 
+                            else { sfx.error(); c1.classList.remove('flipped'); c2.classList.remove('flipped'); c1.textContent = ''; c2.textContent = ''; }
+                            flippedCards = [];
+                        }, 800);
+                    }
+                };
+                document.getElementById('memory-board').appendChild(card);
+            });
+        }
+
+        function initAirplane() {
+            gameArea.innerHTML = `<canvas id="planeCanvas" width="300" height="400" style="background:#81d4fa;"></canvas>`;
+            const canvas = document.getElementById('planeCanvas'), ctx = canvas.getContext('2d');
+            let plane = { x: 135, y: 350, w: 30, h: 30, drag: false }, goal = { x: 0, y: 0, w: 300, h: 40 }, clouds = [{x: 0, y: 100, w: 80, h: 40, s: 2, d: 1}, {x: 220, y: 180, w: 90, h: 40, s: 3, d: -1}, {x: 50, y: 260, w: 70, h: 40, s: 2.5, d: 1}];
+            function getPos(e) { const r = canvas.getBoundingClientRect(); return { x: (e.touches ? e.touches[0].clientX : e.clientX) - r.left, y: (e.touches ? e.touches[0].clientY : e.clientY) - r.top }; }
+            canvas.onmousedown = canvas.ontouchstart = (e) => { const p = getPos(e); if(p.x > plane.x && p.x < plane.x+plane.w && p.y > plane.y && p.y < plane.y+plane.h) { plane.drag = true; e.preventDefault(); } };
+            window.onmouseup = window.ontouchend = () => plane.drag = false;
+            canvas.onmousemove = canvas.ontouchmove = (e) => { if(plane.drag) { const p = getPos(e); plane.x = p.x - plane.w/2; plane.y = p.y - plane.h/2; } };
+            function update() {
+                if(!isGameRunning) return; ctx.clearRect(0,0,300,400);
+                ctx.fillStyle = '#4caf50'; ctx.fillRect(goal.x, goal.y, goal.w, goal.h); ctx.fillStyle = 'white'; ctx.font = '16px Arial'; ctx.fillText('CANADÁ', 115, 25);
+                ctx.fillStyle = '#607d8b'; clouds.forEach(c => {
+                    c.x += c.s * c.d; if(c.x < -20 || c.x + c.w > 320) c.d *= -1;
+                    ctx.beginPath(); ctx.arc(c.x+20, c.y+20, 20, 0, Math.PI*2); ctx.arc(c.x+c.w-20, c.y+20, 20, 0, Math.PI*2); ctx.fill();
+                    if(plane.x < c.x+c.w && plane.x+plane.w > c.x && plane.y < c.y+35 && plane.y+plane.h > c.y+5) { sfx.error(); plane.x = 135; plane.y = 350; plane.drag = false; }
+                });
+                ctx.fillStyle = '#e91e63'; ctx.beginPath(); ctx.moveTo(plane.x + plane.w/2, plane.y); ctx.lineTo(plane.x + plane.w, plane.y + plane.h); ctx.lineTo(plane.x, plane.y + plane.h); ctx.fill();
+                if(plane.y < goal.y + goal.h) { plane.drag = false; winLevel(); } else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initCodebreaker() {
+            const sec = [Math.floor(Math.random()*5)+1, Math.floor(Math.random()*5)+1, Math.floor(Math.random()*5)+1];
+            gameArea.innerHTML = `<div style="display:flex; gap:10px; justify-content:center;"><input type="number" id="c1" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"><input type="number" id="c2" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"><input type="number" id="c3" min="1" max="5" value="1" style="width:50px; text-align:center; font-size:20px;"></div><button class="play-btn" onclick="checkCode()">Intentar</button><p id="code-hint" style="margin-top:10px;"></p>`;
+            window.checkCode = () => {
+                let ex = 0, g = [parseInt(document.getElementById('c1').value), parseInt(document.getElementById('c2').value), parseInt(document.getElementById('c3').value)];
+                for(let i=0; i<3; i++) if(g[i] === sec[i]) ex++;
+                if(ex === 3) winLevel(); else { sfx.error(); document.getElementById('code-hint').textContent = `${ex} número(s) correcto(s) en su posición.`; }
+            }
+        }
+
+        function initCatcher() {
+            gameArea.innerHTML = `<canvas id="catchCanvas" width="300" height="400"></canvas>`; const ctx = document.getElementById('catchCanvas').getContext('2d');
+            let p = {x: 125, y: 360, w: 50, h: 20}, items = [], score = 0, keys = {}; window.onkeydown = e => keys[e.key] = true; window.onkeyup = e => keys[e.key] = false;
+            function update() {
+                if(!isGameRunning) return; if(keys['ArrowLeft'] && p.x > 0) p.x -= 6; if(keys['ArrowRight'] && p.x < 300-p.w) p.x += 6;
+                if(Math.random() < 0.05) items.push({x: Math.random()*280, y: 0, type: Math.random() > 0.3 ? 'heart' : 'tear'});
+                ctx.clearRect(0,0,300,400); ctx.fillStyle = '#880e4f'; ctx.fillRect(p.x, p.y, p.w, p.h);
+                for(let i=items.length-1; i>=0; i--) {
+                    let it = items[i]; it.y += 3.5; ctx.fillStyle = it.type === 'heart' ? '#e91e63' : '#2196f3'; ctx.fillRect(it.x, it.y, 15, 15);
+                    if(it.y+15 > p.y && it.y < p.y+p.h && it.x+15 > p.x && it.x < p.x+p.w) { if(it.type === 'heart') { sfx.catch(); score++; } else { sfx.error(); score = Math.max(0, score-2); } items.splice(i, 1); } else if(it.y > 400) items.splice(i, 1);
+                }
+                ctx.fillStyle = 'white'; ctx.font = '16px Arial'; ctx.fillText(`Corazones: ${score}/10`, 10, 20);
+                if(score >= 10) winLevel(); else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initCeleste() {
+            gameArea.innerHTML = `<canvas id="celesteCanvas" width="400" height="300"></canvas>`; const ctx = document.getElementById('celesteCanvas').getContext('2d');
+            let p = { x: 20, y: 250, vx: 0, vy: 0, w: 15, h: 15, speed: 3, jump: -6, dash: 8 }, st = { gr: false, dash: true, isD: false, dT: 0, fr: true }, keys = {};
+            window.onkeydown = e => keys[e.code] = true; window.onkeyup = e => keys[e.code] = false;
+            const plats = [ [0, 280, 400, 20], [100, 230, 50, 10], [200, 180, 50, 10], [300, 100, 20, 100], [150, 80, 50, 10], [20, 60, 40, 10] ], crys = [{x: 270, y: 150, act: true}], goal = {x: 25, y: 35, w: 20, h: 25};
+            function update() {
+                if(!isGameRunning) return;
+                if (!st.isD) {
+                    if (keys['ArrowLeft']) { p.vx = -p.speed; st.fr = false; } else if (keys['ArrowRight']) { p.vx = p.speed; st.fr = true; } else p.vx *= 0.8;
+                    p.vy += 0.3; if ((keys['KeyZ'] || keys['ArrowUp']) && st.gr) { p.vy = p.jump; st.gr = false; keys['KeyZ'] = keys['ArrowUp'] = false; sfx.jump(); }
+                    if (keys['KeyX'] && st.dash) {
+                        st.isD = true; st.dash = false; st.dT = 15; let dx=0, dy=0;
+                        if(keys['ArrowRight']) dx=1; else if(keys['ArrowLeft']) dx=-1; if(keys['ArrowUp']) dy=-1; else if(keys['ArrowDown']) dy=1;
+                        if(!dx && !dy) dx = st.fr?1:-1; if(dx && dy) { dx*=0.707; dy*=0.707; } p.vx=dx*p.dash; p.vy=dy*p.dash; keys['KeyX']=false;
+                    }
+                } else { st.dT--; if (st.dT <= 0) { st.isD = false; p.vx*=0.5; p.vy*=0.5; } }
+                p.x += p.vx; p.y += p.vy; st.gr = false;
+                if(p.x<0) p.x=0; if(p.x+p.w>400) p.x=400-p.w; if(p.y>300) { sfx.error(); p.x=20; p.y=250; p.vy=0; }
+                for(let pl of plats) {
+                    if (p.x < pl[0]+pl[2] && p.x+p.w > pl[0] && p.y < pl[1]+pl[3] && p.y+p.h > pl[1]) {
+                        let px = p.x-p.vx, py = p.y-p.vy;
+                        if (py+p.h <= pl[1]) { p.y=pl[1]-p.h; p.vy=0; st.gr=st.dash=true; } else if (py >= pl[1]+pl[3]) { p.y=pl[1]+pl[3]; p.vy=0; } else if (px+p.w <= pl[0]) { p.x=pl[0]-p.w; p.vx=0; } else if (px >= pl[0]+pl[2]) { p.x=pl[0]+pl[2]; p.vx=0; }
+                    }
+                }
+                crys.forEach(c => { if(c.act && p.x<c.x+10 && p.x+p.w>c.x && p.y<c.y+10 && p.y+p.h>c.y) { sfx.catch(); c.act=false; st.dash=true; setTimeout(()=>c.act=true, 3000); } });
+                ctx.fillStyle = '#111'; ctx.fillRect(0,0,400,300);
+                ctx.fillStyle = '#455a64'; plats.forEach(pl => { ctx.fillRect(pl[0], pl[1], pl[2], pl[3]); ctx.fillStyle='#cfd8dc'; ctx.fillRect(pl[0], pl[1], pl[2], 3); ctx.fillStyle='#455a64'; });
+                crys.forEach(c => { if(c.act) { ctx.fillStyle='#00e5ff'; ctx.fillRect(c.x, c.y, 10, 10); } });
+                ctx.fillStyle = '#f06292'; ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
+                ctx.fillStyle = st.dash ? '#f44336' : '#2196f3'; ctx.fillRect(p.x, p.y, p.w, p.h);
+                if(st.isD) { ctx.fillStyle='rgba(244,67,54,0.5)'; ctx.fillRect(p.x-p.vx, p.y-p.vy, p.w, p.h); }
+                if(p.x < goal.x+goal.w && p.x+p.w > goal.x && p.y < goal.y+goal.h && p.y+p.h > goal.y) winLevel(); else animationFrameId = requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        function initFinal() {
+            gameArea.innerHTML = `<input type="text" id="final-word" placeholder="Ej: amor..." style="padding:10px; font-size:16px;"><button class="play-btn" onclick="checkFinal()">Sellar Promesa</button>`;
+            window.checkFinal = () => { if(document.getElementById('final-word').value.trim().toLowerCase() === 'sana') winLevel(); else { sfx.error(); feedback.textContent = "Pista: Llevamos una relación s _ _ _."; } };
+        }
+        // ==========================================
+        // SISTEMA DE PARTÍCULAS (Pétalos de Sakura y Luces)
+        // ==========================================
+        const canvasParticles = document.getElementById('particles-canvas');
+        const ctxParticles = canvasParticles.getContext('2d');
+        let particlesArray = [];
+        
+        function resizeCanvas() {
+            canvasParticles.width = window.innerWidth;
+            canvasParticles.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvasParticles.width;
+                this.y = Math.random() * canvasParticles.height - canvasParticles.height;
+                this.size = Math.random() * 6 + 2;
+                this.speedY = Math.random() * 1 + 0.5;
+                this.speedX = Math.random() * 2 - 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 5 - 2.5;
+                // Tipo 0: Pétalo Sakura (hoja), Tipo 1: Orbe brillante (algo bonito extra)
+                this.type = Math.random() > 0.4 ? 0 : 1; 
+                this.opacity = Math.random() * 0.6 + 0.4;
+            }
+            update() {
+                // La velocidad aumenta ligeramente según el nivel
+                let levelMultiplier = 1 + (currentLevel * 0.2);
+                
+                this.y += this.speedY * levelMultiplier;
+                this.x += (this.speedX + Math.sin(this.angle * Math.PI / 180)) * (levelMultiplier * 0.6);
+                this.angle += this.spin;
+
+                if (this.y > canvasParticles.height) {
+                    this.reset();
+                    this.y = -10; 
+                }
+            }
+            draw() {
+                ctxParticles.save();
+                ctxParticles.translate(this.x, this.y);
+                ctxParticles.rotate(this.angle * Math.PI / 180);
+                
+                if (this.type === 0) {
+                    // Pétalo de Sakura
+                    ctxParticles.fillStyle = `rgba(255, 183, 206, ${this.opacity})`;
+                    ctxParticles.beginPath();
+                    ctxParticles.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                    ctxParticles.fill();
+                } else {
+                    // Orbe de luz mágico
+                    ctxParticles.beginPath();
+                    let gradient = ctxParticles.createRadialGradient(0, 0, 0, 0, 0, this.size);
+                    gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+                    gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+                    ctxParticles.fillStyle = gradient;
+                    ctxParticles.arc(0, 0, this.size, 0, Math.PI * 2);
+                    ctxParticles.fill();
+                }
+                ctxParticles.restore();
+            }
+        }
+
+        function initParticles() {
+            particlesArray = [];
+            for (let i = 0; i < 70; i++) {
+                particlesArray.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctxParticles.clearRect(0, 0, canvasParticles.width, canvasParticles.height);
+            // Mostrar partículas solo si ya empezamos (si currentLevel > 0 o la intro terminó)
+            if (document.getElementById('intro-screen').style.display === 'none') {
+               for (let i = 0; i < particlesArray.length; i++) {
+                   // Aumenta la cantidad de partículas visibles según el nivel (del 20% al 100%)
+                   let targetCount = Math.floor(70 * (0.2 + (currentLevel * 0.1)));
+                   if(i < targetCount) {
+                       particlesArray[i].update();
+                       particlesArray[i].draw();
+                   }
+               }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+        renderTimeline();
+    </script>
+</body>
+</html>
