@@ -260,7 +260,40 @@
         // ==========================================
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        document.getElementById('btn-si').addEventListener('click', async () => {
+document.getElementById('btn-si').addEventListener('click', async () => {
+            // ==========================================
+            // 1. DESBLOQUEO DE AUDIO INMEDIATO (FIX PARA GITHUB)
+            // ==========================================
+            const audioInicio = document.getElementById('audio-inicio');
+            const audioEpic = document.getElementById('audio-epic');
+            const audioTalk = document.getElementById('audio-talk');
+
+            // Reanudar el AudioContext para los efectos de sonido
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+
+            // Iniciamos la música INMEDIATAMENTE al hacer clic, pero en silencio
+            if(audioInicio && audioEpic) {
+                audioInicio.volume = 0;
+                audioEpic.volume = 0;
+                audioInicio.play().catch(e => console.log("Auto-play Inicio bloqueado", e));
+                audioEpic.play().catch(e => console.log("Auto-play Epic bloqueado", e));
+            }
+
+            // Desbloqueamos el audio de la máquina de escribir reproduciendo y pausando
+            if(audioTalk) {
+                audioTalk.volume = 0;
+                let playPromise = audioTalk.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        audioTalk.pause();
+                        audioTalk.volume = 1; // Lo dejamos listo para después
+                    }).catch(e => console.log("Auto-play Talk bloqueado", e));
+                }
+            }
+
+            // ==========================================
+            // 2. ANIMACIONES DE INTRODUCCIÓN
+            // ==========================================
             const qBox = document.getElementById('question-box');
             qBox.style.transform = 'scale(0.8)';
             qBox.style.opacity = '0';
@@ -269,14 +302,15 @@
             
             await sleep(1500); 
 
-            const audioInicio = document.getElementById('audio-inicio');
-            const audioEpic = document.getElementById('audio-epic');
-
-            if(audioInicio && audioEpic) {
-                audioEpic.volume = 0; 
-                audioInicio.play().catch(e => console.log("Auto-play bloqueado", e));
-                audioEpic.play().catch(e => console.log("Auto-play epic bloqueado", e));
+            // ==========================================
+            // 3. SINCRONIZACIÓN DE MÚSICA
+            // ==========================================
+            // Ahora sí, ponemos el audio desde el principio y subimos el volumen
+            if(audioInicio) {
+                audioInicio.currentTime = 0;
+                audioInicio.volume = 1; 
             }
+            // (La canción Epic se queda en volumen 0 hasta que toque su turno más adelante)
             
             const introText = document.getElementById('intro-text');
             introText.textContent = "Hola amorr :)";
